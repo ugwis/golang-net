@@ -289,6 +289,7 @@ type Framer struct {
 
 	w    io.Writer
 	wbuf []byte
+	wqbuf []byte
 
 	// AllowIllegalWrites permits the Framer's Write methods to
 	// write frames that do not conform to the HTTP/2 spec. This
@@ -368,12 +369,23 @@ func (f *Framer) endWrite() error {
 		f.logWrite()
 	}
 
+	/*n, err := f.w.Write(f.wbuf)
+	if err == nil && n != len(f.wbuf) {
+		err = io.ErrShortWrite
+	}
+	return err*/
+	f.wqbuf = append(f.wqbuf, f.wbuf...)
+	return nil
+}
+
+func (f *Framer) FlushWrite() error {
 	n, err := f.w.Write(f.wbuf)
 	if err == nil && n != len(f.wbuf) {
 		err = io.ErrShortWrite
 	}
 	return err
 }
+
 
 func (f *Framer) logWrite() {
 	if f.debugFramer == nil {
