@@ -379,10 +379,11 @@ func (f *Framer) endWrite() error {
 }
 
 func (f *Framer) FlushWrite() error {
-	n, err := f.w.Write(f.wbuf)
+	n, err := f.w.Write(f.wqbuf)
 	if err == nil && n != len(f.wbuf) {
-		err = io.ErrShortWrite
+		return io.ErrShortWrite
 	}
+	f.wbuf = nil
 	return err
 }
 
