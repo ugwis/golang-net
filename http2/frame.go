@@ -379,7 +379,7 @@ func (f *Framer) endWrite() error {
 }
 
 func (f *Framer) FlushWrite() error {
-	n, err := f.w.Write(f.wqbuf)
+	_, err := f.w.Write(f.wqbuf)
 	f.wbuf = nil
 	return err
 }
